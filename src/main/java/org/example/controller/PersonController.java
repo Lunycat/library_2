@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import jakarta.validation.Valid;
+import org.example.model.Book;
 import org.example.model.Person;
 import org.example.service.BookService;
 import org.example.service.PersonService;
@@ -40,6 +41,7 @@ public class PersonController {
     public String show(Model model, @PathVariable Long id) {
         model.addAttribute("person", personService.findById(id));
         model.addAttribute("books", bookService.getAllBooksByOwnerId(id));
+
         return "people/show";
     }
 
@@ -47,6 +49,7 @@ public class PersonController {
     @GetMapping("/new")
     public String create(Model model) {
         model.addAttribute("person", new Person());
+
         return "people/new";
     }
 
@@ -65,6 +68,7 @@ public class PersonController {
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable Long id) {
         model.addAttribute("person", personService.findById(id));
+
         return "people/edit";
     }
 
@@ -76,6 +80,7 @@ public class PersonController {
         }
 
         personService.update(id, person);
+
         return "redirect:/people/" + id;
     }
     //------------------------
@@ -84,6 +89,7 @@ public class PersonController {
     public String delete(@PathVariable Long id) {
         personService.delete(id);
         bookService.deleteReader(id);
+        
         return "redirect:/people";
     }
 }
