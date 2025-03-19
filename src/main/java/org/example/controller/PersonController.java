@@ -33,6 +33,7 @@ public class PersonController {
     @GetMapping
     public String index(Model model) {
         model.addAttribute("people", personService.findAll());
+
         return "/people/index";
     }
 
@@ -89,7 +90,7 @@ public class PersonController {
     public String delete(@PathVariable Long id) {
         personService.delete(id);
         bookService.deleteReader(id);
-        
+
         return "redirect:/people";
     }
 }

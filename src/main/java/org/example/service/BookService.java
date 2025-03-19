@@ -4,9 +4,12 @@ import org.example.model.Book;
 import org.example.model.Person;
 import org.example.repository.BookRepository;
 import org.example.repository.PersonRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -21,8 +24,14 @@ public class BookService {
         this.personRepository = personRepository;
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public List<Book> findAll(int page, int itemPerPage, boolean sortYear) {
+        List<Book> result;
+        if (sortYear) {
+            result = bookRepository.findAll(PageRequest.of(page, itemPerPage, Sort.by("year"))).getContent();
+        } else {
+            result = bookRepository.findAll(PageRequest.of(page, itemPerPage)).getContent();
+        }
+        return result;
     }
 
     public Book findById(Long id) {

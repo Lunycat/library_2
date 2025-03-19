@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -32,8 +34,13 @@ public class BookController {
     }
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("books", bookService.findAll());
+    public String index(Model model, @RequestParam Map<String, String> allParams) {
+        int page = Integer.parseInt(allParams.getOrDefault("page", "0"));
+        int itemPerPage = Integer.parseInt(allParams.getOrDefault("books_per_page", "10"));
+        boolean sortByYear = Boolean.parseBoolean(allParams.get("sort_by_year"));
+
+        model.addAttribute("books", bookService.findAll(page, itemPerPage, sortByYear));
+
         return "books/index";
     }
 
@@ -48,18 +55,21 @@ public class BookController {
         } else {
             model.addAttribute("person", personService.findById(book.getOwner().getId()));
         }
+
         return "books/show";
     }
 
     @PatchMapping("/{bookId}/add_reader")
     public String addReader(@RequestParam Long personId, @PathVariable Long bookId) {
         bookService.addReader(personId, bookId);
+
         return "redirect:/books/" + bookId;
     }
 
     @PatchMapping("/{bookId}/delete_reader")
     public String deleteReader(@PathVariable Long bookId) {
         bookService.deleteReader(bookId);
+
         return "redirect:/books/" + bookId;
     }
     //------------------------
@@ -68,6 +78,7 @@ public class BookController {
     @GetMapping("/new")
     public String create(Model model) {
         model.addAttribute("book", new Book());
+
         return "books/new";
     }
     //------------------------
@@ -79,6 +90,7 @@ public class BookController {
         }
 
         bookService.save(book);
+
         return "redirect:/books";
     }
     //------------------------
@@ -87,6 +99,7 @@ public class BookController {
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable Long id) {
         model.addAttribute("book", bookService.findById(id));
+
         return "books/edit";
     }
 
@@ -97,6 +110,7 @@ public class BookController {
         }
 
         bookService.update(id, book);
+
         return "redirect:/books/" + book.getId();
     }
     //------------------------
@@ -104,6 +118,7 @@ public class BookController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         bookService.delete(id);
+
         return "redirect:/books";
     }
 }
