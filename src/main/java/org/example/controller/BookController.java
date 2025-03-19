@@ -42,12 +42,12 @@ public class BookController {
     public String show(@PathVariable Long id, Model model) {
         Book book = bookDao.getBook(id);
         model.addAttribute("book", book);
-        if (book.getPersonId() == null) {
+        /*if (book.getPersonId() == null) {
             model.addAttribute("people", personDao.getPeople());
             model.addAttribute("person", new Person());
         } else {
             model.addAttribute("person", personDao.getPerson(book.getPersonId()));
-        }
+        }*/
         return "books/show";
     }
 

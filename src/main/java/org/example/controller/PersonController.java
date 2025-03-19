@@ -5,6 +5,7 @@ import org.example.dao.BookDao;
 import org.example.dao.PersonDao;
 import org.example.model.Book;
 import org.example.model.Person;
+import org.example.service.PersonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,24 +23,24 @@ import java.util.List;
 @RequestMapping("/people")
 public class PersonController {
 
-    private final PersonDao personDao;
+    private final PersonService personService;
     private final BookDao bookDao;
 
-    public PersonController(PersonDao personDao, BookDao bookDao) {
-        this.personDao = personDao;
+    public PersonController(PersonService personService, BookDao bookDao) {
+        this.personService = personService;
         this.bookDao = bookDao;
     }
 
     @GetMapping
     public String index(Model model) {
-        model.addAttribute("people", personDao.getPeople());
+        model.addAttribute("people", personService.findAll());
         return "/people/index";
     }
 
     // Просмотр читателя
     @GetMapping("/{id}")
     public String show(Model model, @PathVariable Long id) {
-        model.addAttribute("person", personDao.getPerson(id));
+        model.addAttribute("person", personService.findById(id));
         model.addAttribute("books", bookDao.getOwners(id));
         return "people/show";
     }
@@ -57,7 +58,7 @@ public class PersonController {
             return "people/new";
         }
 
-        personDao.save(person);
+        personService.save(person);
         return "redirect:/people";
     }
     //------------------------
@@ -65,7 +66,7 @@ public class PersonController {
     //Редактирование нового чеповека
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable Long id) {
-        model.addAttribute("person", personDao.getPerson(id));
+        model.addAttribute("person", personService.findById(id));
         return "people/edit";
     }
 
@@ -76,14 +77,14 @@ public class PersonController {
             return "people/edit";
         }
 
-        personDao.update(id, person);
+        personService.update(id, person);
         return "redirect:/people/" + id;
     }
     //------------------------
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
-        personDao.delete(id);
+        personService.delete(id);
         bookDao.deleteReader(id);
         return "redirect:/people";
     }
