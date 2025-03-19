@@ -1,7 +1,9 @@
 package org.example.service;
 
 import org.example.model.Book;
+import org.example.model.Person;
 import org.example.repository.BookRepository;
+import org.example.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +14,11 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final PersonRepository personRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, PersonRepository personRepository) {
         this.bookRepository = bookRepository;
+        this.personRepository = personRepository;
     }
 
     public List<Book> findAll() {
@@ -39,5 +43,20 @@ public class BookService {
     @Transactional
     public void delete(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void addReader(Long personId, Long bookId) {
+        Book book = bookRepository.findById(bookId).orElse(null);
+        Person person = personRepository.findById(personId).orElse(null);
+        book.setOwner(person);
+        bookRepository.save(book);
+    }
+
+    @Transactional
+    public void deleteReader(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElse(null);
+        book.setOwner(null);
+        bookRepository.save(book);
     }
 }

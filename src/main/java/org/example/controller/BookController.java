@@ -5,6 +5,7 @@ import org.example.dao.BookDao;
 import org.example.dao.PersonDao;
 import org.example.model.Book;
 import org.example.model.Person;
+import org.example.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,44 +23,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/books")
 public class BookController {
 
-    private final BookDao bookDao;
+    private final BookService bookService;
     private final PersonDao personDao;
 
     @Autowired
-    public BookController(BookDao bookDao, PersonDao personDao) {
-        this.bookDao = bookDao;
+    public BookController(BookService bookService, PersonDao personDao) {
+        this.bookService = bookService;
         this.personDao = personDao;
     }
 
     @GetMapping
     public String index(Model model) {
-        model.addAttribute("books", bookDao.getBooks());
+        model.addAttribute("books", bookService.findAll());
         return "books/index";
     }
 
     // Просмотр книги
     @GetMapping("/{id}")
     public String show(@PathVariable Long id, Model model) {
-        Book book = bookDao.getBook(id);
+        Book book = bookService.findById(id);
         model.addAttribute("book", book);
-        /*if (book.getPersonId() == null) {
+        if (book.getOwner() == null) {
             model.addAttribute("people", personDao.getPeople());
             model.addAttribute("person", new Person());
         } else {
-            model.addAttribute("person", personDao.getPerson(book.getPersonId()));
-        }*/
+            model.addAttribute("person", personDao.getPerson(book.getOwner().getId()));
+        }
         return "books/show";
     }
 
     @PatchMapping("/{bookId}/add_reader")
     public String addReader(@RequestParam Long personId, @PathVariable Long bookId) {
-        bookDao.addReader(personId, bookId);
+        bookService.addReader(personId, bookId);
         return "redirect:/books/" + bookId;
     }
 
     @PatchMapping("/{bookId}/delete_reader")
     public String deleteReader(@PathVariable Long bookId) {
-        bookDao.deleteReader(bookId);
+        bookService.deleteReader(bookId);
         return "redirect:/books/" + bookId;
     }
     //------------------------
@@ -78,7 +79,7 @@ public class BookController {
             return "books/new";
         }
 
-        bookDao.save(book);
+        bookService.save(book);
         return "redirect:/books";
     }
     //------------------------
@@ -86,7 +87,7 @@ public class BookController {
     //Редактирование новой книги
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable Long id) {
-        model.addAttribute("book", bookDao.getBook(id));
+        model.addAttribute("book", bookService.findById(id));
         return "books/edit";
     }
 
@@ -96,14 +97,14 @@ public class BookController {
             return "books/edit";
         }
 
-        bookDao.update(id, book);
+        bookService.update(id, book);
         return "redirect:/books/" + book.getId();
     }
     //------------------------
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
-        bookDao.delete(id);
+        bookService.delete(id);
         return "redirect:/books";
     }
 }
