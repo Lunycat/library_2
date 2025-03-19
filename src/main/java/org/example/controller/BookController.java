@@ -1,11 +1,10 @@
 package org.example.controller;
 
 import jakarta.validation.Valid;
-import org.example.dao.BookDao;
-import org.example.dao.PersonDao;
 import org.example.model.Book;
 import org.example.model.Person;
 import org.example.service.BookService;
+import org.example.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BookController {
 
     private final BookService bookService;
-    private final PersonDao personDao;
+    private final PersonService personService;
 
     @Autowired
-    public BookController(BookService bookService, PersonDao personDao) {
+    public BookController(BookService bookService, PersonService personService) {
         this.bookService = bookService;
-        this.personDao = personDao;
+        this.personService = personService;
     }
 
     @GetMapping
@@ -44,10 +43,10 @@ public class BookController {
         Book book = bookService.findById(id);
         model.addAttribute("book", book);
         if (book.getOwner() == null) {
-            model.addAttribute("people", personDao.getPeople());
+            model.addAttribute("people", personService.findAll());
             model.addAttribute("person", new Person());
         } else {
-            model.addAttribute("person", personDao.getPerson(book.getOwner().getId()));
+            model.addAttribute("person", personService.findById(book.getOwner().getId()));
         }
         return "books/show";
     }

@@ -59,4 +59,9 @@ public class BookService {
         book.setOwner(null);
         bookRepository.save(book);
     }
+
+    public List<Book> getAllBooksByOwnerId(Long personId) {
+        Person person = personRepository.findById(personId).orElse(null);
+        return person.getBooks();
+    }
 }

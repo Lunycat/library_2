@@ -1,10 +1,8 @@
 package org.example.controller;
 
 import jakarta.validation.Valid;
-import org.example.dao.BookDao;
-import org.example.dao.PersonDao;
-import org.example.model.Book;
 import org.example.model.Person;
+import org.example.service.BookService;
 import org.example.service.PersonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +22,11 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
-    private final BookDao bookDao;
+    private final BookService bookService;
 
-    public PersonController(PersonService personService, BookDao bookDao) {
+    public PersonController(PersonService personService, BookService bookService) {
         this.personService = personService;
-        this.bookDao = bookDao;
+        this.bookService = bookService;
     }
 
     @GetMapping
@@ -41,7 +39,7 @@ public class PersonController {
     @GetMapping("/{id}")
     public String show(Model model, @PathVariable Long id) {
         model.addAttribute("person", personService.findById(id));
-        model.addAttribute("books", bookDao.getOwners(id));
+        model.addAttribute("books", bookService.getAllBooksByOwnerId(id));
         return "people/show";
     }
 
@@ -85,7 +83,7 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         personService.delete(id);
-        bookDao.deleteReader(id);
+        bookService.deleteReader(id);
         return "redirect:/people";
     }
 }
