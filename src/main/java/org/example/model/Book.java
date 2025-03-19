@@ -8,9 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -38,4 +42,8 @@ public class Book {
     @NotNull
     @Column(name = "year")
     private Integer year;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "absence_since")
+    private Date absenceSince;
 }
