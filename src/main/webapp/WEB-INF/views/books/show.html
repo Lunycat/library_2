@@ -8,7 +8,7 @@
 
 <p th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
 <!---- Если нет читателя ---->
-<form th:method="PATCH" th:action="@{/books/{bookId}/add_reader(bookId=${book.id})}" th:if="${book.personId == null}">
+<form th:method="PATCH" th:action="@{/books/{bookId}/add_reader(bookId=${book.id})}" th:if="${book.owner == null}">
     <p>Эта книга свободна. Кому назначить её?</p>
     <label for="person">Выберите человека:</label>
     <select name="personId" id="person">
@@ -19,7 +19,7 @@
 <!---------------------------->
 
 <!---- Если есть читатель ---->
-<form th:method="PATCH" th:action="@{/books/{bookId}/delete_reader(bookId=${book.id})}" th:if="${book.personId != null}">
+<form th:method="PATCH" th:action="@{/books/{bookId}/delete_reader(bookId=${book.id})}" th:if="${book.owner != null}">
     <label for="person_alt">Книга сейчас у:</label>
     <span id="person_alt" th:text="${person.fullName}"></span>
     <input type="submit" value="Освободить">

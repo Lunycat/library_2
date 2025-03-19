@@ -31,7 +31,7 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan("org.example")
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:hibernate.properties")
 @EnableWebMvc
 @EnableTransactionManagement
 @EnableJpaRepositories("org.example.repository")

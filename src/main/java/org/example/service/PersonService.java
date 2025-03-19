@@ -24,8 +24,8 @@ public class PersonService {
         return personRepository.findAll();
     }
 
-    public Optional<Person> findById(Long id) {
-        return personRepository.findById(id);
+    public Person findById(Long id) {
+        return personRepository.findById(id).orElse(null);
     }
 
     @Transactional
