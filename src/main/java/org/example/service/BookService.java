@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -72,5 +70,9 @@ public class BookService {
     public List<Book> getAllBooksByOwnerId(Long personId) {
         Person person = personRepository.findById(personId).orElse(null);
         return person.getBooks();
+    }
+
+    public Book getSearchBook(String search) {
+        return bookRepository.findByTitleStartingWithIgnoreCase(search);
     }
 }
