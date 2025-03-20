@@ -8,7 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,6 +62,7 @@ public class BookService {
         Book book = bookRepository.findById(bookId).orElse(null);
         Person person = personRepository.findById(personId).orElse(null);
         book.setOwner(person);
+        book.setAbsenceSince(LocalDateTime.now());
         bookRepository.save(book);
     }
 
@@ -64,6 +70,7 @@ public class BookService {
     public void deleteReader(Long bookId) {
         Book book = bookRepository.findById(bookId).orElse(null);
         book.setOwner(null);
+        book.setAbsenceSince(null);
         bookRepository.save(book);
     }
 
@@ -74,5 +81,21 @@ public class BookService {
 
     public Book getSearchBook(String search) {
         return bookRepository.findByTitleStartingWithIgnoreCase(search);
+    }
+
+    public Map<Long, Boolean> findOverdueBooks(List<Book> books) {
+        Map<Long, Boolean> overdueBooksId = new HashMap<>();
+
+        for (Book book : books) {
+            long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), book.getAbsenceSince()) + 1;
+
+            if (daysBetween > 10) {
+                overdueBooksId.put(book.getId(), Boolean.TRUE);
+            } else {
+                overdueBooksId.put(book.getId(), Boolean.FALSE);
+            }
+        }
+
+        return overdueBooksId;
     }
 }

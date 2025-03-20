@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -45,5 +45,5 @@ public class Book {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "absence_since")
-    private Date absenceSince;
+    private LocalDateTime absenceSince;
 }

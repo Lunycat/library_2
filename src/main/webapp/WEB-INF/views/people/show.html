@@ -14,7 +14,7 @@
 <div th:if="${!books.isEmpty()}">
     <hr>
     <b>Книги:</b>
-    <p th:each="book : ${books}" th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
+    <p th:style="${overdueId.get(book.id) ? 'color:red' : ''}" th:each="book : ${books}" th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
 </div>
 <!---------------------------->
 <hr>
